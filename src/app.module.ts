@@ -6,6 +6,8 @@ import { CategoiesModule } from './categoies/categoies.module';
 import { BookreviewsModule } from './bookreviews/bookreviews.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { SeedModule } from './seed/seed.module';
+import { AuthorsModule } from './authors/authors.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { ConfigModule } from '@nestjs/config';
     BooksModule,
     CategoiesModule,
     BookreviewsModule,
+    SeedModule,
+    AuthorsModule,
   ],
   controllers: [],
   providers: [],

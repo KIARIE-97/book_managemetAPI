@@ -9,4 +9,7 @@ export class CreateBookreviewDto {
 
   @IsNumber()
   profile_id: number; // Assuming this is the ID of the profile associated with the book review
+
+  @IsNumber()
+  book_id: number; // Assuming this is the ID of the book being reviewed
 }

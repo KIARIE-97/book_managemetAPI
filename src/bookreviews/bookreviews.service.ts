@@ -19,6 +19,14 @@ export class BookreviewsService {
     const profile = await this.profileRepository.findOne({
       where: { id: createBookreviewDto.profile_id },
     });
+    const book = await this.bookreviewRepository.findOne({
+      where: { id: createBookreviewDto.book_id },
+    });
+    if (!book) {
+      throw new NotFoundException(
+        `book with ID ${createBookreviewDto.book_id} not found`,
+      );
+    }
 
     if (!profile) {
       throw new NotFoundException(
@@ -31,6 +39,7 @@ export class BookreviewsService {
       rating: createBookreviewDto.rating,
       content: createBookreviewDto.content,
       profile: createBookreviewDto.profile_id,
+      books: createBookreviewDto.book_id, // Assuming book_id is part of the DTO
     });
 
     // Save the course to the database

@@ -7,5 +7,8 @@ GET {{URL}}/profiles
 GET {{URL}}/users
 
 ###
+POST  {{URL}}/seed
+
+###
 GET {{URL}}/bookreviews
 

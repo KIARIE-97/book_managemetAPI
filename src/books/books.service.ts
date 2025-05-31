@@ -5,15 +5,37 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { Categoy } from 'src/categoies/entities/categoy.entity';
+import { Author } from 'src/authors/entities/author.entity';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(Book) private bookRepository: Repository<Book>,
+    @InjectRepository(Author)
+    private authorRepository: Repository<Author>,
     @InjectRepository(Categoy) private categoyRepository: Repository<Categoy>,
   ) {}
-  create(createBookDto: CreateBookDto) {
-    return 'This action adds a new book';
+  async create(createBookDto: CreateBookDto): Promise<Book> {
+    // Find the author
+    const author = await this.authorRepository.findOne({
+      where: { id: createBookDto.author_id },
+    });
+
+    if (!author) {
+      throw new NotFoundException(
+        `Author with id ${createBookDto.author_id} not found`,
+      );
+    }
+
+    const newBook = this.bookRepository.create({
+      title: createBookDto.title,
+      desciption: createBookDto.description,
+      publicationYear: createBookDto.publicationYear,
+      is_available: createBookDto.is_available,
+      authors: author.id, // Set the author's ID
+    });
+
+    return this.bookRepository.save(newBook);
   }
   async assignCategoryToBook(
     bookId: number,
@@ -53,8 +75,18 @@ export class BooksService {
     return book;
   }
 
-  findAll() {
-    return `This action returns all books`;
+  async findAll(name?: string): Promise<Book[] | Book> {
+    if (name) {
+      return await this.bookRepository.find({
+        where: {
+          title: `%${name}%`,
+        },
+        relations: ['bookreview'],
+      });
+    }
+    return await this.bookRepository.find({
+      relations: ['bookreview'],
+    });
   }
 
   findOne(id: number) {

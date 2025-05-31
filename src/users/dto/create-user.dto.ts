@@ -16,6 +16,4 @@ export class CreateUserDto {
     @IsNotEmpty()
     is_active: boolean;
    
-    
-    
 }
