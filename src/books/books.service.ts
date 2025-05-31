@@ -6,6 +6,7 @@ import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { Categoy } from 'src/categoies/entities/categoy.entity';
 import { Author } from 'src/authors/entities/author.entity';
+import { Bookreview } from 'src/bookreviews/entities/bookreview.entity';
 
 @Injectable()
 export class BooksService {
@@ -14,6 +15,8 @@ export class BooksService {
     @InjectRepository(Author)
     private authorRepository: Repository<Author>,
     @InjectRepository(Categoy) private categoyRepository: Repository<Categoy>,
+    @InjectRepository(Bookreview)
+    private bookreviewRepository: Repository<Bookreview>,
   ) {}
   async create(createBookDto: CreateBookDto): Promise<Book> {
     // Find the author
@@ -38,17 +41,17 @@ export class BooksService {
     return this.bookRepository.save(newBook);
   }
   async assignCategoryToBook(
-    bookId: number,
+    book_id: number,
     categoryId: number,
   ): Promise<Book> {
     // Find the book with categories relation
     const book = await this.bookRepository.findOne({
-      where: { id: bookId },
+      where: { id: book_id },
       relations: ['categories'],
     });
 
     if (!book) {
-      throw new NotFoundException(`Book with ID ${bookId} not found`);
+      throw new NotFoundException(`Book with ID ${book_id} not found`);
     }
 
     // Find the category
@@ -81,14 +84,46 @@ export class BooksService {
         where: {
           title: `%${name}%`,
         },
-        relations: ['bookreview'],
+        relations: ['bookreviews'],
       });
     }
     return await this.bookRepository.find({
-      relations: ['bookreview'],
+      relations: ['bookreviews'],
     });
   }
 
+  async addReviewToBook(book_id: number, review_id: number): Promise<Book> {
+    // Find the book with bookreviews relation
+    const book = await this.bookRepository.findOne({
+      where: { id: book_id },
+      relations: ['bookreviews'],
+    });
+
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${book_id} not found`);
+    }
+
+    // Find the review
+    const review = await this.bookreviewRepository.findOneBy({ id: review_id });
+    if (!review) {
+      throw new NotFoundException(`Review with ID ${review_id} not found`);
+    }
+
+    // Initialize bookreviews array if it doesn't exist
+    if (!book.bookreviews) {
+      book.bookreviews = [];
+    }
+
+    // Check if already added
+    const isAlreadyAdded = book.bookreviews.some((r) => r.id === review_id);
+
+    if (!isAlreadyAdded) {
+      book.bookreviews.push(review);
+      await this.bookRepository.save(book);
+    }
+
+    return book;
+  }
   findOne(id: number) {
     return `This action returns a #${id} book`;
   }

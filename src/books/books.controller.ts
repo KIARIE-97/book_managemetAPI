@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -11,11 +11,17 @@ export class BooksController {
   create(@Body() createBookDto: CreateBookDto) {
     return this.booksService.create(createBookDto);
   }
-
-   @Get()
-    findAll(@Query('name') name?: string) {
-      return this.booksService.findAll(name);
-    }
+  @Post(':book_id/review/:review_1d')
+  addReviewToBook(
+    @Param('bookId', ParseIntPipe) bookId: number,
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+  ) {
+    return this.booksService.addReviewToBook(bookId, reviewId);
+  }
+  @Get()
+  findAll(@Query('name') name?: string) {
+    return this.booksService.findAll(name);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

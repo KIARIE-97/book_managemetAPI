@@ -12,3 +12,11 @@ POST  {{URL}}/seed
 ###
 GET {{URL}}/bookreviews
 
+###
+GET {{URL}}/books
+
+###
+GET {{URL}}/authors
+
+###
+POST {{URL}}/books/11/reviews/1
