@@ -6,7 +6,7 @@ export class User {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
+  @Column({ length: 50 })
   name: string;
 
   @Column()

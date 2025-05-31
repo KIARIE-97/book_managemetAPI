@@ -5,9 +5,14 @@ import { BooksModule } from './books/books.module';
 import { CategoiesModule } from './categoies/categoies.module';
 import { BookreviewsModule } from './bookreviews/bookreviews.module';
 import { DatabaseModule } from './database/database.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     ProfilesModule,
     UsersModule,
     BooksModule,
@@ -18,7 +23,6 @@ import { DatabaseModule } from './database/database.module';
     BooksModule,
     CategoiesModule,
     BookreviewsModule,
-    DatabaseModule,
   ],
   controllers: [],
   providers: [],
